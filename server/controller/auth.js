@@ -6,20 +6,20 @@ const registerData = async (req, res) => {
   try {
     const { username, userid, userpassword, role } = req.body;
     if (username == "" || userid == "" || userpassword == "" || role == "") {
-      return res.status(400).json({ message: "All fields are required" });
+      return res.json({ message: "All fields are required", status: 400 });
     }
 
     const user_exist = await User_model.findOne({ userid });
     if (user_exist) {
-      return res.status(409).json({ message: "User already exist" });
+      return res.json({ message: "User already exist", status: 409 });
     }
     const password = await encryptPassword(userpassword);
 
     const new_user = new User_model({ username, userid, password, role });
     await new_user.save();
-    res.status(201).json({ message: "New user stored" });
+    res.json({ message: "New user stored", status: 201 });
   } catch (error) {
-    res.status(500).json({ Error: `Error on Registration : ${error}` });
+    res.json({ Error: `Error on Registration : ${error}`, status: 500 });
   }
 };
 
@@ -34,13 +34,13 @@ const loginData = async (req, res) => {
       "password role"
     );
     if (!user_exist) {
-      return res.status(404).json({ message: "User not exist" });
+      return res.json({ message: "User not exist", status: 404 });
     }
 
     const { password, role } = user_exist;
     const verify_password = await verifyPassword(userpassword, password);
     if (!verify_password) {
-      return res.status(401).json({ message: "invalid password" });
+      return res.json({ message: "invalid password", status: 401 });
     }
 
     const token = generateJwtToken(userid, role);
@@ -50,7 +50,7 @@ const loginData = async (req, res) => {
       sameSite: "lax",
       maxAge: 15 * 60 * 1000,
     });
-    res.json({ message: `User Logged` });
+    res.json({ message: `User Logged`, status: 200 });
   } catch (error) {
     res.json({ Error: `Error on Login - ${error}` });
   }
