@@ -2,14 +2,16 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import router from "./routes/routes.js";
-import connectDb from "./config/db.js";
+import connectDb from "./helper/db.js";
+import cookieParser from "cookie-parser";
 
 dotenv.config();
 const { PORT } = process.env;
-connectDb();
+await connectDb();
 const app = express();
 const port = PORT || 4000;
 app.use(cors());
+app.use(cookieParser());
 app.use(express.json());
 app.use("/", router);
 

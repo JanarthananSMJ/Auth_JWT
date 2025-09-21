@@ -1,8 +1,10 @@
 import express from "express";
-import loginData from "../controller/login.js";
+import { loginData, registerData } from "../controller/auth.js";
+import verifyToken from "../middleware/auth.middleware.js";
 
 const router = express.Router();
 
 router.post("/login", loginData);
+router.post("/register", registerData);
 
 export default router;
